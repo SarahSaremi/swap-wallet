@@ -11,6 +11,7 @@ class CoinConversionView(View):
     CACHE_TIMEOUT = 60  # Cache timeout: 1 minute
 
     def get(self, request, *args, **kwargs):
+        customer = request.user.customer
         source_coin_symbol = request.GET.get('source_coin')
         source_amount = Decimal(request.GET.get('source_amount'))
         destination_coin_symbol = request.GET.get('destination_coin')
@@ -21,7 +22,7 @@ class CoinConversionView(View):
         conversion_rate = Decimal(source_usd_price / destination_usd_price)
         destination_amount = source_amount * conversion_rate
 
-        cache_key = f"{source_coin_symbol}-{destination_coin_symbol}-{source_amount}"
+        cache_key = f"{customer.id}-{source_amount}-{source_coin_symbol}-{destination_coin_symbol}"
 
         conversion_data = {
             "source_amount": str(source_amount),

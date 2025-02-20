@@ -46,7 +46,7 @@ class TestCoinSwap(TestCase):
         self.assertEqual(response_data['conversion_data']['destination_coin'], 'USDT')
         self.assertEqual(Decimal(response_data['conversion_data']['destination_amount']), Decimal(5))
 
-        cache_key = "BTC-USDT-5"
+        cache_key = f"{self.customer.id}-5-BTC-USDT"
         cached_data = cache.get(cache_key)
         self.assertIsNotNone(cached_data)
         self.assertEqual(Decimal(cached_data['destination_amount']), Decimal(5))
@@ -62,7 +62,7 @@ class TestCoinSwap(TestCase):
 
         self.client.get(self.convert_url, {'source_coin': 'BTC', 'source_amount': '5', 'destination_coin': 'USDT'})
 
-        cache_key = "BTC-USDT-5"
+        cache_key = f"{self.customer.id}-5-BTC-USDT"
 
         response = self.client.post(self.swap_url, {
             'source_coin': 'BTC',
@@ -84,7 +84,7 @@ class TestCoinSwap(TestCase):
         self.assertIsNone(cache.get(cache_key))
 
     def test_swap_coins_cache_expired(self):
-        cache_key = "BTC-USDT-5"
+        cache_key = f"{self.customer.id}-5-BTC-USDT"
         expired_conversion_data = {
             "source_amount": "5",
             "destination_amount": "210000.00",

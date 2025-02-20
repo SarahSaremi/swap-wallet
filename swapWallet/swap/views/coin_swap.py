@@ -11,11 +11,12 @@ from swap.models import Coin, Wallet
 class CoinSwapView(View):
 
     def post(self, request, *args, **kwargs):
+        customer = request.user.customer
         source_coin_symbol = request.POST.get('source_coin')
         destination_coin_symbol = request.POST.get('destination_coin')
         source_amount = Decimal(request.POST.get('source_amount'))
 
-        cache_key = f"{source_coin_symbol}-{destination_coin_symbol}-{source_amount}"
+        cache_key = f"{customer.id}-{source_amount}-{source_coin_symbol}-{destination_coin_symbol}"
         conversion_data = cache.get(cache_key)
 
         if not conversion_data:
