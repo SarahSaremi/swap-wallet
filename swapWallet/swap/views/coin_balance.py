@@ -1,12 +1,11 @@
 from decimal import Decimal
 
-import requests
 from django.http import JsonResponse
 from django.views import View
 
 from swap.models import Wallet
+from swap.utils import get_usd_price
 
-CRYPTO_COMPARE_URL = "https://min-api.cryptocompare.com/data/generateAvg?fsym={}&tsym=USD&e=coinbase"
 DECIMAL_PLACES = 6
 
 
@@ -22,7 +21,7 @@ class CoinBalanceView(View):
             coin_balance = balance.balance
 
             try:
-                usd_price = self.get_usd_price(coin_symbol)
+                usd_price = get_usd_price(coin_symbol)
                 coin_value_usd = coin_balance * Decimal(usd_price)
             except Exception as e:
                 return JsonResponse({"error": f"Error fetching price for {coin_symbol}: {str(e)}"}, status=400)
@@ -34,18 +33,3 @@ class CoinBalanceView(View):
             })
 
         return JsonResponse({"coin_balances": coin_balances}, status=200)
-
-    @staticmethod
-    def get_usd_price(coin_symbol: str):
-        url = CRYPTO_COMPARE_URL.format(coin_symbol)
-        response = requests.get(url)
-
-        if response.status_code == 200:
-            data = response.json()
-            try:
-                price = data['RAW']['PRICE']
-                return price
-            except KeyError:
-                raise ValueError(f"Price not found for {coin_symbol}")
-        else:
-            raise ValueError(f"Failed to fetch data for {coin_symbol}")
