@@ -30,7 +30,7 @@ class CoinConversionView(View):
             "source_coin": source_coin_symbol,
             "destination_coin": destination_coin_symbol,
             "rate_at_time": str(conversion_rate),
-            "timestamp": time.time()
+            "timestamp": time.monotonic()
         }
         cache.set(cache_key, conversion_data, timeout=self.CACHE_TIMEOUT)
 

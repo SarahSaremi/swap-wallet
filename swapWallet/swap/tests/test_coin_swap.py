@@ -91,7 +91,7 @@ class TestCoinSwap(TestCase):
             "source_coin": "BTC",
             "destination_coin": "USDT",
             "rate_at_time": "1.0",
-            "timestamp": time.time() - 61
+            "timestamp": time.monotonic() - 61
         }
         cache.set(cache_key, expired_conversion_data, timeout=60)
 

@@ -22,7 +22,7 @@ class CoinSwapView(View):
         if not conversion_data:
             return JsonResponse({"error": "Conversion data has expired, please recalculate."}, status=400)
 
-        elapsed_time = time.time() - conversion_data["timestamp"]
+        elapsed_time = time.monotonic() - conversion_data["timestamp"]
         if elapsed_time > 60:
             return JsonResponse({"error": "Conversion data has expired, please recalculate."}, status=400)
 
